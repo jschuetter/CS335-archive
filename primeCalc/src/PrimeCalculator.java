@@ -4,14 +4,33 @@ import javax.swing.*;
 import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 import java.util.Date;
+import java.util.Arrays;
 
 public class PrimeCalculator implements ActionListener {
+    //Members for calculating primes
+    final int MAX_INPUT = 1000000;
+    boolean primeArr[] = new boolean[MAX_INPUT];
+    void initPrimes () {
+        Arrays.fill(primeArr, true);
+        for (int i = 2; i < MAX_INPUT; i++) {
+            if (!primeArr[i]) continue; //Skip non-prime elements
+            for (int j = i*2; j < MAX_INPUT; j+=i) {
+                primeArr[j] = false;  //Set all multiples of i to false
+            }
+        }
+    }
+
+    //GUI members
     private JButton enterBtn, saveBtn, resetBtn;
     private JTextField inTxt;
     private JTextArea outTxt;
+
+    //File output members
     final String outFile = "primeCalcOutput.txt";
 
     PrimeCalculator() {
+        initPrimes(); //Initialize primes array
+
         JFrame frame = new JFrame("Prime Calculator");
         Container pane = frame.getContentPane();
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
@@ -104,12 +123,14 @@ public class PrimeCalculator implements ActionListener {
             String result;
             try {
                 int num = Integer.parseInt(inTxt.getText());
-                boolean prime = isPrime(num);
+                //boolean prime = isPrime(num);
+                boolean prime = primeArr[num];
 
                 if (prime) result = Integer.toString(num) + " is prime!";
                 else result = Integer.toString(num) + " is not prime.";
             } catch (Exception ex) {
-                result = "Invalid input.";
+                result = "Invalid input.\n" +
+                        "(Must be integer value between 0 and 999,999)";
             }
 
             outTxt.setText(result);
@@ -117,17 +138,6 @@ public class PrimeCalculator implements ActionListener {
 
     public static void main(String[] args) {
         new PrimeCalculator();
-    }
-
-    //Checks primality of an integer argument
-    //Returns boolean
-    static boolean isPrime (int num){
-        //Check all numbers up to half the argument for common factors
-        for (int i = 2; i <= num/2; i++) {  //Check this condition - i<=num/2??
-            if (num%i==0) return false;
-        }
-
-        return true; //Return true if no factor is found
     }
 }
 
