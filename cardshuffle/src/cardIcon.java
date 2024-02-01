@@ -31,9 +31,9 @@ public class cardIcon extends JLabel {
         String number, suit;
         number = toCard(num);
         suit = toSuit(sym);
-        File f = new File("cards\\"+number+"_of_"+suit+".png");
+        File f = new File("cards/"+number+"_of_"+suit+".png");
         try{
-            Image img = ImageIO.read(new File("cards\\"+number+"_of_"+suit+".png"));
+            Image img = ImageIO.read(f);
             img = img.getScaledInstance(69,100,Image.SCALE_SMOOTH);
             setIcon(new ImageIcon(img));
         } catch (Exception ex) {
