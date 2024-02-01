@@ -4,8 +4,6 @@ import javax.imageio.*;
 import java.io.File;
 
 public class cardIcon extends JLabel {
-    //private JButton btn;
-    private ImageIcon icon;
     //Constructor
     public cardIcon() {
         setSize(69,100);

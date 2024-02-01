@@ -4,10 +4,8 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
-
 public class cardshuffle {
     private static cardIcon cards[][] = new cardIcon[4][13];
-    //private static cardIcon cardLst[] = new cardIcon[52];
     private static JFrame frame = new JFrame("Shuffle cards!");
     private static JPanel cardPne = new JPanel(new GridLayout(4,13,3,3));
     public static void main(String[] args) {
@@ -45,7 +43,6 @@ public class cardshuffle {
     static AbstractAction shuffleCards = new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("Shuffling");
             //Initialize deck array to ensure no duplicates
             //Array contains {suit,number} pairs
             ArrayList<int[]> deck = new ArrayList<int[]>();
@@ -56,8 +53,6 @@ public class cardshuffle {
             }
 
             //Fill cardPne with cards in random order
-            //cardPne.removeAll();
-            //frame.repaint();
             Random r = new Random();
             for (int i = 0; i <= 3; i++) {
                 for (int j = 1; j <= 13; j++) {
