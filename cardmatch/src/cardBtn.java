@@ -6,8 +6,9 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.Objects;
 
-public class cardBtn extends JButton implements MouseListener {
+public class cardBtn extends JButton {
     private ImageIcon face, back; //Icon objects to store front and back images - declared at construction
+    public String suit, val; //Stores current values of card face
     final private int WIDTH = 69, HEIGHT = 100;
     private boolean faceUp = false; //Boolean value - true when card is facing up
     //private ImageIcon back = new ImageIcon("cards/back.png");
@@ -15,8 +16,10 @@ public class cardBtn extends JButton implements MouseListener {
     //Default constructor - no parameters
     public cardBtn() {
         setSize(WIDTH,HEIGHT);
+        face = null;
+        back = new ImageIcon(Objects.requireNonNull(getImg(-1,-1)));
+        flipCard(faceUp);
         setVisible(true);
-        addMouseListener(this);
     }
 
     //Constructor
@@ -30,42 +33,40 @@ public class cardBtn extends JButton implements MouseListener {
     //Pair (-1,-1) indicates card back image
     public cardBtn(int sym, int num) {
         setSize(WIDTH,HEIGHT);
+        suit = toSuit(sym);
+        val = toCard(num);
         face = new ImageIcon(Objects.requireNonNull(getImg(sym, num)));
         back = new ImageIcon(Objects.requireNonNull(getImg(-1, -1)));
-        flipCard(!faceUp); //Invert boolean value to set default position
+        flipCard(faceUp); //Invert boolean value to set default position
         setVisible(true);
-        addMouseListener(this);
         //repaint();
     }
     //Overloaded constructor - includes boolean parameter to allow initializing face-up
     public cardBtn(int sym, int num, boolean facing) {
         setSize(WIDTH,HEIGHT);
+        suit = toSuit(sym);
+        val = toCard(num);
         face = new ImageIcon(Objects.requireNonNull(getImg(sym, num)));
         back = new ImageIcon(Objects.requireNonNull(getImg(-1, -1)));
-        flipCard(!facing);
+        flipCard(facing);
         setVisible(true);
-        addMouseListener(this);
         //repaint();
-    }
-
-    //Flip card on mouse click
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        flipCard();
     }
 
     //Sets the face of the card to a card icon
     public void setCard(int sym, int num) {
+        suit = toSuit(sym);
+        val = toCard(num);
         face = new ImageIcon(Objects.requireNonNull(getImg(sym, num)));
         if (faceUp) {
             setIcon(face);
             //repaint();
-        }
+        } else setIcon(back);
     }
 
     //Flips the card to the opposite state:
     //Face-down if currently face-up or vice versa
-    private void flipCard() {
+    public void flipCard() {
         //System.out.println("Flip");
         if (faceUp) {
             setIcon(back);
@@ -79,15 +80,15 @@ public class cardBtn extends JButton implements MouseListener {
     }
     //Overload of flipCard to allow explicit facing
     //Sets face up if facing=true
-    private void flipCard(boolean facing) {
+    public void flipCard(boolean facing) {
         //System.out.println("Flip");
         if (facing) {
-            setIcon(back);
-            faceUp = false;
-        }
-        else {
             setIcon(face);
             faceUp = true;
+        }
+        else {
+            setIcon(back);
+            faceUp = false;
         }
         //repaint();
     }
@@ -159,19 +160,5 @@ public class cardBtn extends JButton implements MouseListener {
             default: number=Integer.toString(in);
         }
         return number;
-    }
-
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-    }
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-    @Override
-    public void mouseExited(MouseEvent e) {
     }
 }
