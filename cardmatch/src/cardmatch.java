@@ -1,13 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
-import java.util.Timer;
 
 import static java.lang.Thread.sleep;
 
@@ -17,14 +15,14 @@ public class cardmatch {
     private static final JFrame frame = new JFrame("Match cards!");
     private static final JPanel cardPne = new JPanel(new GridLayout(4,13,3,3));
     private static final JPanel controlPne = new JPanel();
-    private static final int MISS_DELAY = 2000; //Delay on missed guess, in ms
+    private static final int MISS_DELAY = 3000; //Delay on missed guess, in ms
 
     private static cardBtn firstPick = null, secondPick = null; //Stores the first card picked by user
 
     //Game UI objects
     private static int guessCnt = 0, matchCnt = 0;
     private static JButton resetBtn, quitBtn;
-    private static JLabel guessLbl, scoreLbl;
+    private static JLabel guessLbl, scoreLbl, gameOverLbl;
 
     private static boolean interactive = true; // Used to disable user interaction with cards while showing non-match
 
@@ -62,6 +60,11 @@ public class cardmatch {
         controlPne.add(scoreLbl);
 
         frame.add(controlPne);
+
+        gameOverLbl = new JLabel("Game over. You win!");
+        gameOverLbl.setVisible(false);
+        frame.add(gameOverLbl);
+
         frame.setVisible(true);
 
         //Assign cards for new game
@@ -108,21 +111,7 @@ public class cardmatch {
         updateLbls();
         frame.repaint();
     }
-
-/*
-    static AbstractAction resetCards = new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            for (int i = 0; i <= 3; i++) {
-                for (int j = 1; j <= 13; j++) {
-                    cards[i][j-1].setCard(i, j);
-                    cards[i][j-1].setEnabled(true);
-                }
-            }
-            frame.repaint();
-        }
-    };*/
-
+    
     static MouseListener cardClicked = new MouseListener() {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -137,6 +126,9 @@ public class cardmatch {
                         firstPick.setEnabled(false);
                         secondPick.setEnabled(false);
                         firstPick = null;
+
+                        //Check for game over
+                        if (matchCnt >= 26) gameOverLbl.setVisible(true);
                     } else {
                         //If guess is wrong, wait 3s then flip cards back
                         //Uses thread to allow second card to flip before interrupted by sleep() command

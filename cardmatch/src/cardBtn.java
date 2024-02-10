@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import javax.imageio.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.Objects;
 
@@ -112,20 +110,6 @@ public class cardBtn extends JButton {
         }
         return null;
     }
-
-
-    /*public void setIcon(int sym, int num) {
-        File f = new File(getImgPath(sym, num));
-        try{
-            Image img = ImageIO.read(f);
-            img = img.getScaledInstance(69,100,Image.SCALE_SMOOTH);
-            setIcon(new ImageIcon(img));
-        } catch (Exception ex) {
-            System.out.println("Image read error on " + toCard(num) + " of " + toSuit(sym));
-            System.out.println("Path: " + f.getAbsolutePath());
-            System.out.println(ex);
-        }
-    }*/
 
     //Converts integer value to suit string to allow file reading
     private String toSuit(int in) {
