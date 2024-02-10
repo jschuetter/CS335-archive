@@ -87,7 +87,7 @@ public class cardmatch {
     private static void newGame() {
         //Initialize deck array to ensure no duplicates
         //Array contains {suit,number} pairs
-        ArrayList<int[]> deck = new ArrayList<int[]>();
+        ArrayList<int[]> deck = new ArrayList<>();
         for (int i = 0; i <=3; i++) {
             for (int j = 1; j <= 13; j++) {
                 deck.add(new int[] {i,j});
@@ -111,20 +111,20 @@ public class cardmatch {
         updateLbls();
         frame.repaint();
     }
-    
+
     static MouseListener cardClicked = new MouseListener() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            //Only enabled if var interactive = true
-            if (interactive) {
+            //Only enabled if var interactive = true and if last selected card is currently active (i.e. not already selected)
+            if (interactive && ((cardBtn) e.getSource()).en) {
                 if (firstPick != null) {
                     secondPick = (cardBtn) e.getSource();
                     secondPick.flipCard();
                     if (Objects.equals(firstPick.val, secondPick.val)) {
                         //If the cards match, increment score and disable interaction
                         matchCnt++;
-                        firstPick.setEnabled(false);
-                        secondPick.setEnabled(false);
+                        firstPick.setEnabled(false); secondPick.setEnabled(false); //SetEnabled to false to grey out cards
+                        firstPick.en = false; secondPick.en = false;
                         firstPick = null;
 
                         //Check for game over
@@ -132,30 +132,26 @@ public class cardmatch {
                     } else {
                         //If guess is wrong, wait 3s then flip cards back
                         //Uses thread to allow second card to flip before interrupted by sleep() command
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                interactive = false;
-                                System.out.println("Interaction disabled");
-                                try {
-                                    sleep(MISS_DELAY);
-                                } catch (InterruptedException ex) {
-                                    throw new RuntimeException(ex);
-                                }
-
-                                firstPick.flipCard();
-                                secondPick.flipCard();
-                                interactive = true;
-                                firstPick = null;
-                                System.out.println("Interaction re-enabled");
+                        new Thread(() -> {
+                            interactive = false;
+                            try {
+                                sleep(MISS_DELAY);
+                            } catch (InterruptedException ex) {
+                                throw new RuntimeException(ex);
                             }
+
+                            firstPick.en = true; secondPick.en = true;
+                            firstPick.flipCard(); secondPick.flipCard();
+                            interactive = true;
+                            firstPick = null;
                         }).start();
                     }
-                    guessCnt++;
+                    guessCnt++; //Increment guess count regardless of whether guess was correct
                 } else {
                     //If this is the first guess, store the card clicked
                     firstPick = (cardBtn) e.getSource();
                     firstPick.flipCard();
+                    firstPick.en = false;
                 }
                 updateLbls();
             }

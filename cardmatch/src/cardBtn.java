@@ -9,7 +9,7 @@ public class cardBtn extends JButton {
     public String suit, val; //Stores current values of card face
     final private int WIDTH = 69, HEIGHT = 100;
     private boolean faceUp = false; //Boolean value - true when card is facing up
-    //private ImageIcon back = new ImageIcon("cards/back.png");
+    public boolean en = true; //Enable bit - allows card flipping and guess increment when true
 
     //Default constructor - no parameters
     public cardBtn() {
@@ -37,7 +37,6 @@ public class cardBtn extends JButton {
         back = new ImageIcon(Objects.requireNonNull(getImg(-1, -1)));
         flipCard(faceUp); //Invert boolean value to set default position
         setVisible(true);
-        //repaint();
     }
     //Overloaded constructor - includes boolean parameter to allow initializing face-up
     public cardBtn(int sym, int num, boolean facing) {
@@ -48,7 +47,6 @@ public class cardBtn extends JButton {
         back = new ImageIcon(Objects.requireNonNull(getImg(-1, -1)));
         flipCard(facing);
         setVisible(true);
-        //repaint();
     }
 
     //Sets the face of the card to a card icon
@@ -58,37 +56,30 @@ public class cardBtn extends JButton {
         face = new ImageIcon(Objects.requireNonNull(getImg(sym, num)));
         if (faceUp) {
             setIcon(face);
-            //repaint();
         } else setIcon(back);
     }
 
     //Flips the card to the opposite state:
     //Face-down if currently face-up or vice versa
     public void flipCard() {
-        //System.out.println("Flip");
         if (faceUp) {
             setIcon(back);
             faceUp = false;
-        }
-        else {
+        } else {
             setIcon(face);
             faceUp = true;
         }
-        //repaint();
     }
     //Overload of flipCard to allow explicit facing
     //Sets face up if facing=true
     public void flipCard(boolean facing) {
-        //System.out.println("Flip");
         if (facing) {
             setIcon(face);
             faceUp = true;
-        }
-        else {
+        } else {
             setIcon(back);
             faceUp = false;
         }
-        //repaint();
     }
 
 
