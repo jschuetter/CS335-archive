@@ -2,6 +2,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
@@ -17,7 +18,8 @@ public class ImageRotate extends JFrame {
     JLabel rotationLbl;
     JSlider rotateSldr;
     ImagePanel imgPnl;
-    JFileChooser filePicker = new JFileChooser(new File("."));
+    JFileChooser filePicker;
+    FileNameExtensionFilter filetypes = new FileNameExtensionFilter("Image files", "jpg", "jpeg", "png", "gif");
 
     //Constructor
     ImageRotate() {
@@ -74,6 +76,9 @@ public class ImageRotate extends JFrame {
         imgPnl = new ImagePanel();
         this.add(imgPnl);
 
+        filePicker = new JFileChooser(new File("."));
+        filePicker.setFileFilter(filetypes);
+
         this.setVisible(true);
     }
 
@@ -103,34 +108,35 @@ public class ImageRotate extends JFrame {
         public void setImg(File path) {
             try {
                 orig = ImageIO.read(path);
-                //pnlImg = ImageIO.read(path);
             } catch (Exception ex) {
                 System.out.println("File read error");
                 System.out.println(ex);
             }
 
-            //Scale image if needed
-            if (orig.getWidth() > dispW) {
-                double scaleFactor = (double) dispW/(double) orig.getWidth();
-                BufferedImage scaled = new BufferedImage(dispW, dispH, orig.getType());
-                AffineTransform at = AffineTransform.getScaleInstance(scaleFactor, scaleFactor);
-                AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
-                scaled =  scaleOp.filter(orig, scaled);
-                orig = imgcpy(scaled);
-            }
-            if (orig.getHeight() > dispH) {
-                int scaleFactor = dispH/orig.getHeight();
-                BufferedImage scaled = new BufferedImage(dispW, dispH, orig.getType());
-                AffineTransform at = AffineTransform.getScaleInstance(scaleFactor, scaleFactor);
-                AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
-                scaled =  scaleOp.filter(orig, scaled);
-                orig = imgcpy(scaled);
-            }
+            if (orig != null) {
+                //Scale image if needed
+                double w = (double) orig.getWidth(), h = (double) orig.getHeight();
+                if (w > dispW || h > dispH) {
+                    double sf = 1.0; //Scale factor
+                    if (w-dispW > h-dispH) sf = (double) dispW / w;
+                    else sf = (double) dispH / h;
 
-            //Copy original image to panel image
-            pnlImg = imgcpy(orig);
+                    //Calculate new dimensions
+                    int nW = (int) (w*sf), nH = (int) (h*sf);
+                    BufferedImage scaled = new BufferedImage(nW, nH, orig.getType());
+                    AffineTransform at = AffineTransform.getScaleInstance(sf, sf);
+                    AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+                    scaled = scaleOp.filter(orig, scaled);
+                    orig = imgcpy(scaled);
+                }
+                //Copy original image to panel image
+                pnlImg = imgcpy(orig);
 
-            repaint();
+                repaint();
+            } else {
+                rotationLbl.setText("File read error!");
+                repaint();
+            }
         }
 
         public void resetImg() {
